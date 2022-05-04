@@ -1,5 +1,6 @@
 <script lang="ts">
   import { enhance } from "$lib/actions/form";
+  import { fade, blur, fly, slide, scale } from "svelte/transition";
 
   export let todo: Todo;
   export let processDeletedTodoResult: (res: Response) => void;
@@ -85,7 +86,7 @@
   }
 </style>
 
-<div class="todo" class:done={todo.done}>
+<div class="todo" class:done={todo.done} >
   <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
     result: processUpdatedTodoResult
   }}>
