@@ -1,7 +1,7 @@
 // Learn more about this file in the docs: https://pris.ly/d/prisma-schema
 datasource db {
   provider = "postgresql"
-  url = env("DATABASE_URL")
+  url = "postgresql://postgres:GaQAa8wsqsxTrVfPYh97@containers-us-west-41.railway.app:6841/railway"
 }
 
 generator client {
