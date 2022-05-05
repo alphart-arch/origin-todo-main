@@ -1,7 +1,8 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
   import { enhance } from "$lib/actions/form";
- 
+
+  /*export let processDeletedTodoResult: (res: Response) => void; */
   export const load: Load = async ({ fetch }) => {
     const res = await fetch("/todos.json");
 
@@ -17,10 +18,12 @@
       error: new Error(message)
     }
   };
+/*---------------------------------------*/
+
+/*------------------------------------------------*/
 </script>
 
 <script lang="ts" >
-  import TodoItem from "$lib/todo-item.svelte";
 
   export let todos: Todo[];
 const date=new Date().toLocaleString();
@@ -37,40 +40,18 @@ const date=new Date().toLocaleString();
     const updatedTodo = await res.json();
     todos = todos.map(t => {
       if (t.uid === updatedTodo.uid) return updatedTodo;
-      return t;
-    })
+      return t;    })
+      };
+
+  const processDeletedTodoResult = async (res:Response) => {
+    const deletedtodo = await res.json();
+    
+    todos = todos.filter(t => t.uid !== deletedtodo.uid);
+
+
+
   };
 /*---------------------------------------------------------------------*/
-  import { quintOut } from 'svelte/easing';
-	import { crossfade } from 'svelte/transition';
-  const [send, receive] = crossfade({
-		duration: d => Math.sqrt(d * 200),
-
-		fallback(node, params) {
-			const style = getComputedStyle(node);
-			const transform = style.transform === 'none' ? '' : style.transform;
-
-			return {
-				duration: 600,
-				easing: quintOut,
-				css: t => `
-					transform: ${transform} scale(${t});
-					opacity: ${t}
-				`
-			};
-		}
-	});
-  
-
-	function remove(todo) {
-		todos = todos.filter(t => t !== todo);
-	}
-
-	function mark(todo, done) {
-		todo.done = done;
-		remove(todo);
-		todos = todos.concat(todo);
-	}/*----------------------------------------------------------------*/
 </script>
 
 <style>
@@ -129,6 +110,19 @@ const date=new Date().toLocaleString();
 		background-repeat: no-repeat;
   }
 
+  .board {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 4em;
+		max-width: 100%;
+		
+        width: 100%;
+        padding: 0.5em 1em 0.3em 1em;
+        box-sizing: border-box;
+		background: rgba(255, 255, 255, 0.05);
+		border-radius: 8px;
+		text-align: center;
+	}
   .todo input {
     flex: 1;
 		padding: 0.5em 2em 0.5em 0.8em;
@@ -149,7 +143,7 @@ const date=new Date().toLocaleString();
 		flex: 1;
   }
 
-  /*.save {
+  .save {
     position: absolute;
 		right: 0;
 		opacity: 0;
@@ -160,7 +154,7 @@ const date=new Date().toLocaleString();
   .save:focus {
     transition: opacity 0.2s;
     opacity: 1;
-  }*/
+  }
 
   .delete {
     background-image: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4.5 5V22H19.5V5H4.5Z' fill='%23676778' stroke='%23676778' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M10 10V16.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M14 10V16.5' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M2 5H22' stroke='%23676778' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M8 5L9.6445 2H14.3885L16 5H8Z' fill='%23676778' stroke='%23676778' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
@@ -191,49 +185,66 @@ const date=new Date().toLocaleString();
 
 <div class="todos">
   <h1>{title}</h1>
-<p>{date}</p>
+
   <form action="/todos.json" method="post" class="new" use:enhance={{
     result: processNewTodoResult
   }}>
     <input type="text"  name="text" aria-label="Add a todo" placeholder="+ type to add a todo" />
   </form>
-  
-	<div class='todo'>
-		<h2>todo</h2>
+  <div class="board" >
+	<div class="todos">
+		<h2>TODO</h2>
 		{#each todos.filter(t => !t.done) as todo (todo.uid)}
-			<label
-				in:receive="{{key: todo.uid}}"
-				out:send="{{key: todo.uid}}"
-			>
-				<button  on:click={() => mark(todo, true)} class="toggle" ></button>
-				<input type="text" name="text" value={todo.text} class="text"/>
-				<button on:click="{() => remove(todo)}" class="delete"></button>
-			</label>
-		{/each}
-	</div>
+			    <div class="todo" class:done={todo.done} >
+          <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
+            result: processUpdatedTodoResult
+          }}>
+            <input type="hidden" name="done" value="{todo.done ? '' : 'true'}" />
+            <button  aria-label="Mark todo as {todo.done ? 'not done' : 'done'}" class="toggle"></button>
+          </form>
+        
+          <form action="/todos/{todo.uid}.json?_method=patch" method="post" class="text" use:enhance={{
+            result: processUpdatedTodoResult
+          }}>
+            <input type="text" name="text" value="{todo.text}" />
+            <button aria-label="Save todo" class="save"></button>
+          </form>
+          
+          <form action="/todos/{todo.uid}.json?_method=delete" method="post" use:enhance={{
+            result: processDeletedTodoResult
+          }}>
+            <button aria-label="Delete todo" class="delete"></button>
+          </form>
+        </div>
+      {/each}
+    </div>
 
-	<div class='todo'>
-		<h2>done</h2>
+	<div class="todos">
+		<h2>DONE</h2>
 		{#each todos.filter(t => t.done) as todo (todo.uid)}
-			<label
-				class="done"
-				in:receive="{{key: todo.uid}}"
-				out:send="{{key: todo.uid}}"
-			>
-				<button on:click={() => mark(todo, false)} class="toggle"></button>
-				<input type="text" name="text" value={todo.text} class="text"/>
-				<button on:click="{() => remove(todo)}" class="delete"></button>
-			</label>
+    <div class="todo" class:done={todo.done} >
+      <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
+        result: processUpdatedTodoResult
+      }}>
+        <input type="hidden" name="done" value="{todo.done ? '' : 'true'}" />
+        <button  aria-label="Mark todo as {todo.done ? 'not done' : 'done'}" class="toggle"></button>
+      </form>
+    
+      <form action="/todos/{todo.uid}.json?_method=patch" method="post" class="text" use:enhance={{
+        result: processUpdatedTodoResult
+      }}>
+        <input type="text" name="text" value="{todo.text}" />
+        <button aria-label="Save todo" class="save"></button>
+      </form>
+      
+      <form action="/todos/{todo.uid}.json?_method=delete" method="post" use:enhance={{
+        result: processDeletedTodoResult
+      }}>
+        <button aria-label="Delete todo" class="delete"></button>
+      </form>
+    </div>
 		{/each}
 	</div>
-  {#each todos as todo}
-    <TodoItem 
-      {todo}
-      processDeletedTodoResult={() => {
-        todos = todos.filter(t => t.uid !== todo.uid);
-      }}
-      {processUpdatedTodoResult}
-    />
-  {/each}
+  </div>
 </div>
 
