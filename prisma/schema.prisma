@@ -15,3 +15,6 @@ model Todo {
   text String
   done Boolean
 }
+
+
+//select * from public."Todo"
