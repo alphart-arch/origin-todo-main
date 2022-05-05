@@ -19,7 +19,7 @@
     }
   };
 /*---------------------------------------*/
-
+import { fly ,fade } from 'svelte/transition';
 /*------------------------------------------------*/
 </script>
 
@@ -192,10 +192,10 @@ const date=new Date().toLocaleString();
     <input type="text"  name="text" aria-label="Add a todo" placeholder="+ type to add a todo" />
   </form>
   <div class="board" >
-	<div class="todos">
+	<div class="todos"  >
 		<h2>TODO</h2>
-		{#each todos.filter(t => !t.done) as todo (todo.uid)}
-			    <div class="todo" class:done={todo.done} >
+		{#each todos.filter(t => !t.done) as todo (todo.uid) } 
+			    <div class="todo" class:done={todo.done} in:fly="{{ y: 200, duration: 2000 }}" out:fade>
           <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
             result: processUpdatedTodoResult
           }}>
@@ -218,11 +218,10 @@ const date=new Date().toLocaleString();
         </div>
       {/each}
     </div>
-
 	<div class="todos">
 		<h2>DONE</h2>
 		{#each todos.filter(t => t.done) as todo (todo.uid)}
-    <div class="todo" class:done={todo.done} >
+    <div class="todo" class:done={todo.done} in:fly="{{ y: 200, duration: 2000 }}" out:fade >
       <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
         result: processUpdatedTodoResult
       }}>
