@@ -24,6 +24,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@prisma/client": "^3.5.0"
+    "@prisma/client": "^3.5.0",
+    "react-datepicker": "^4.7.0"
   }
 }

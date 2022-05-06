@@ -2,6 +2,7 @@
   import type { Load } from "@sveltejs/kit";
   import { enhance } from "$lib/actions/form";
 
+
   /*export let processDeletedTodoResult: (res: Response) => void; */
   export const load: Load = async ({ fetch }) => {
     const res = await fetch("/todos.json");
@@ -183,6 +184,7 @@ const date=new Date().toLocaleString();
   <title>{title}</title>
 </svelte:head>
 
+<!-- svelte-ignore missing-declaration -->
 <div class="todos">
   <h1>{title}</h1>
 
