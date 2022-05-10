@@ -25,6 +25,8 @@
   "type": "module",
   "dependencies": {
     "@prisma/client": "^3.5.0",
+    "framework7": "^7.0.2",
+    "framework7-svelte": "^7.0.2",
     "react-datepicker": "^4.7.0"
   }
 }

@@ -191,8 +191,10 @@ const date=new Date().toLocaleString();
   <form action="/todos.json" method="post" class="new" use:enhance={{
     result: processNewTodoResult
   }}>
-    <input type="text"  name="text" aria-label="Add a todo" placeholder="+ type to add a todo" />
+    <input type="text"  name="text" aria-label="Add a todo" placeholder="+ type to add a todo"  />
   </form>
+  
+  
   <div class="board" >
 	<div class="todos"  >
 		<h2>TODO</h2>
