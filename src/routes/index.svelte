@@ -1,6 +1,8 @@
 <script context="module" lang="ts">
   import type { Load } from "@sveltejs/kit";
   import { enhance } from "$lib/actions/form";
+  let Show="Show Done";
+    let yes=true;
 
 
   /*export let processDeletedTodoResult: (res: Response) => void; */
@@ -49,8 +51,7 @@ const date=new Date().toLocaleString();
     
     todos = todos.filter(t => t.uid !== deletedtodo.uid);
 
-
-
+    
   };
 /*---------------------------------------------------------------------*/
 </script>
@@ -193,6 +194,8 @@ const date=new Date().toLocaleString();
   }}>
     <input type="text"  name="text" aria-label="Add a todo" placeholder="+ type to add a todo"  />
   </form>
+  <label class="todo">
+    <input type="checkbox" bind:checked={yes} >{Show}</label>
   
   
   <div class="board" >
@@ -222,9 +225,13 @@ const date=new Date().toLocaleString();
         </div>
       {/each}
     </div>
+    <form>
+    {#if yes}
+    
 	<div class="todos">
 		<h2>DONE</h2>
 		{#each todos.filter(t => t.done) as todo (todo.uid)}
+    
     <div class="todo" class:done={todo.done} in:fly="{{ y: 200, duration: 2000 }}" out:fade >
       <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
         result: processUpdatedTodoResult
@@ -246,8 +253,13 @@ const date=new Date().toLocaleString();
         <button aria-label="Delete todo" class="delete"></button>
       </form>
     </div>
+    
 		{/each}
 	</div>
-  </div>
+
+  {/if} 
+</form>
+</div>
+
 </div>
 
