@@ -2,7 +2,7 @@
   import type { Load } from "@sveltejs/kit";
   import { enhance } from "$lib/actions/form";
   let Show="Show Done";
-    let yes=true;
+    let yes=false;
 
 
   /*export let processDeletedTodoResult: (res: Response) => void; */
@@ -226,7 +226,7 @@ const date=new Date().toLocaleString();
       {/each}
     </div>
     <form>
-    {#if yes}
+      {#if yes == true }
     
 	<div class="todos">
 		<h2>DONE</h2>
