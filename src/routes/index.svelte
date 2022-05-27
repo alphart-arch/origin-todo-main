@@ -200,7 +200,7 @@ const date=new Date().toLocaleString();
   
   <div class="board" >
 	<div class="todos"  >
-		<h2>TODO</h2>
+		<h2>TODO - list</h2>
 		{#each todos.filter(t => !t.done) as todo (todo.uid) } 
 			    <div class="todo" class:done={todo.done} in:fly="{{ y: 200, duration: 2000 }}" out:fade>
           <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
