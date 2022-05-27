@@ -2,7 +2,7 @@
   import type { Load } from "@sveltejs/kit";
   import { enhance } from "$lib/actions/form";
   let Show="Show Done";
-    let yes=true;
+    let yes=false;
 
 
   /*export let processDeletedTodoResult: (res: Response) => void; */
@@ -200,7 +200,7 @@ const date=new Date().toLocaleString();
   
   <div class="board" >
 	<div class="todos"  >
-		<h2>TODO</h2>
+		<h2>TODO - list</h2>
 		{#each todos.filter(t => !t.done) as todo (todo.uid) } 
 			    <div class="todo" class:done={todo.done} in:fly="{{ y: 200, duration: 2000 }}" out:fade>
           <form action="/todos/{todo.uid}.json?_method=patch" method="post" use:enhance={{
@@ -226,7 +226,7 @@ const date=new Date().toLocaleString();
       {/each}
     </div>
     <form>
-    {#if yes}
+      {#if yes == true }
     
 	<div class="todos">
 		<h2>DONE</h2>
