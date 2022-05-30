@@ -2,7 +2,8 @@
   import type { Load } from "@sveltejs/kit";
   import { enhance } from "$lib/actions/form";
   let Show="Show Done";
-    let yes=false;
+
+  let yes=false;
 
 
   /*export let processDeletedTodoResult: (res: Response) => void; */
